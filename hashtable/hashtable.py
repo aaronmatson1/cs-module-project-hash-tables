@@ -58,6 +58,13 @@ class HashTable:
         """
 
         # Your code here
+        hash = 14695981039346656037 # offset_basis
+        for s in key:
+            hash = hash * 1099511628211 # FNV_prime
+            hash = hash ^ ord(s)
+        return hash % len(self.array)
+
+        """ If I'm being honest here, DJB2 looks a lot cleaner and a lot easier of a number to memorize"""
 
 
     def djb2(self, key):
