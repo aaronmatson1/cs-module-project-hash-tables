@@ -20,8 +20,10 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity):
-        # Your code here
+    def __init__(self, capacity=MIN_CAPACITY):
+        self.capacity = capacity
+        self.array = [None] * capacity
+        
 
 
     def get_num_slots(self):
@@ -35,6 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.capacity
 
 
     def get_load_factor(self):
@@ -44,6 +47,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        return self.count / self.capacity #total number of items / table size
 
 
     def fnv1(self, key):
@@ -63,6 +67,14 @@ class HashTable:
         Implement this, and/or FNV-1.
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        return hash
+
+        """ This function is based off of integer arithmatic using the string values.
+        So what does it do? and why 5381. Well, It's a prime number and it works pretty darn well.
+        Why 33? No clue. """
 
 
     def hash_index(self, key):
@@ -83,6 +95,11 @@ class HashTable:
         """
         # Your code here
 
+        index = self.hash_index(key)
+        if self.array[index] in not None:
+            print(f"Collision Warning: overwriting value: '{self.array[index]}', with value: '{value}'")
+            self.array[index] =value
+
 
     def delete(self, key):
         """
@@ -94,6 +111,9 @@ class HashTable:
         """
         # Your code here
 
+        index = self.hash_index(key)
+        self.array[index] = None
+
 
     def get(self, key):
         """
@@ -104,6 +124,8 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        index = self.hash_index(key)
+        return self.array[index]
 
 
     def resize(self, new_capacity):
