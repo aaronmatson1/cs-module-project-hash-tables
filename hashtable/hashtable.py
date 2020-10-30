@@ -20,9 +20,14 @@ class HashTable:
     Implement this.
     """
 
-    def __init__(self, capacity=MIN_CAPACITY):
-        self.capacity = capacity
-        self.array = [None] * capacity
+    def __init__(self, capacity):
+        if capacity < MIN_CAPACITY:
+            capacity = MIN_CAPACITY
+            return
+        else:
+            self.capacity = capacity
+            self.hash_table = [None] * capacity
+            self.count = 0
         
 
 
@@ -58,11 +63,11 @@ class HashTable:
         """
 
         # Your code here
-        hash = 14695981039346656037 # offset_basis
-        for s in key:
-            hash = hash * 1099511628211 # FNV_prime
-            hash = hash ^ ord(s)
-        return hash % len(self.array)
+        # hash = 14695981039346656037 # offset_basis
+        # for s in key:
+        #     hash = hash * 1099511628211 # FNV_prime
+        #     hash = hash ^ ord(s)
+        # return hash % len(self.array)
 
         """ If I'm being honest here, DJB2 looks a lot cleaner and a lot easier of a number to memorize"""
 
@@ -101,11 +106,18 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        i = self.hash_index(key)
+        entry = HashTableEntry(key, value)
 
-        index = self.hash_index(key)
-        if self.array[index] in not None:
-            print(f"Collision Warning: overwriting value: '{self.array[index]}', with value: '{value}'")
-            self.array[index] =value
+        if self.hash_table is None:
+            self.hash_table[i] = entry
+            self.count += 1
+            return
+
+        node = self.hash_table[i]
+        self.hash_table[i] = entry
+        self.hash_table[i].next = node
+        self.count += 1
 
 
     def delete(self, key):
@@ -117,9 +129,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
-        index = self.hash_index(key)
-        self.array[index] = None
+        i = self.hash_index(key)
+        if i is None:
+            print("key not found")
+        else:
+            self.count -= 1
+            self.hash_table[i] = None
 
 
     def get(self, key):
@@ -132,7 +147,14 @@ class HashTable:
         """
         # Your code here
         index = self.hash_index(key)
-        return self.array[index]
+        entry = self.hash_table[index]
+
+
+        while entry:
+            if entry.key == key:
+                return entry.value
+            entry = entry.next
+        return entry
 
 
     def resize(self, new_capacity):
@@ -143,6 +165,16 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        temp_hash_table = self.hash_table
+        self.capacity = new_capacity
+        self.hash_table = [None] * new_capacity
+        self.count = 0
+
+        for entry in temp_hash_table:
+            curr = entry
+            while curr:
+                self.put(curr.key, curr.value)
+                curr = curr.next
 
 
 
