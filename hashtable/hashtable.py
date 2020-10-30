@@ -107,17 +107,31 @@ class HashTable:
         """
         # Your code here
         i = self.hash_index(key)
-        entry = HashTableEntry(key, value)
+        # entry = HashTableEntry(key, value)
 
-        if self.hash_table is None:
-            self.hash_table[i] = entry
+        if self.hash_table[i] is None:
+            self.hash_table[i] = HashTableEntry(key, value)
             self.count += 1
             return
 
-        node = self.hash_table[i]
-        self.hash_table[i] = entry
-        self.hash_table[i].next = node
-        self.count += 1
+        else:
+            curr = self.hash_table[i]
+            if curr.key == key:
+                curr.value = value
+            else:
+                entry = HashTableEntry(key, value)
+                entry.next = curr
+                self.hash_table[i] = entry
+                self.count += 1
+
+        load_factor = self.get_load_factor()
+        if load_factor > .7:
+            self.resize(int(self.capacity * 2))
+
+        # node = self.hash_table[i]
+        # self.hash_table[i] = entry
+        # self.hash_table[i].next = node
+        # self.count += 1
 
 
     def delete(self, key):
@@ -144,7 +158,10 @@ class HashTable:
             else:
                 prev = curr
                 curr = curr.next
-            self.count -+ 1
+            self.count -= 1
+            load_factor = self.get_load_factor()
+            if load_factor > .2:
+                self.resize(self.capacity //2)
             return
 
 
