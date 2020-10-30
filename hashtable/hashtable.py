@@ -130,11 +130,22 @@ class HashTable:
         """
         # Your code here
         i = self.hash_index(key)
-        if i is None:
-            print("key not found")
-        else:
-            self.count -= 1
-            self.hash_table[i] = None
+        curr = self.hash_table[i]
+        prev = None
+
+        if curr.key == key:
+            self.hash_table[i] = curr.next
+            return
+        while(curr is not None):
+            if curr.key == key:
+                pre.next = curr.next
+                self.hash_table[i].next = None
+                return
+            else:
+                prev = curr
+                curr = curr.next
+            self.count -+ 1
+            return
 
 
     def get(self, key):
